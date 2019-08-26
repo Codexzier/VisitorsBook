@@ -62,14 +62,14 @@ void StartWebserver() {
   Serial.println("Start access point");
   WiFi.mode(WIFI_AP);                    
 
-  byte setMode = 0;                              // 0 = disable, 1 = enable router information
+  byte setMode = 0;                                 // 0 = disable, 1 = enable router information
   wifi_softap_set_dhcps_offer_option(OFFER_ROUTER, &setMode);
   WiFi.softAP("VisitorsBook", "");
 
   mServer.begin();                                  // Start the HTTP Server
 
   Serial.print("Ip Address: ");
-  Serial.println(WiFi.softAPIP()); // Send the IP address of the ESP8266 to the computer
+  Serial.println(WiFi.softAPIP());                  // Send the IP address of the ESP8266 to the computer
 }
 
 // ========================================================================================
@@ -81,58 +81,27 @@ void printOnWebside() {
   if (!webclient) {
     return;
   }
-  if (!WaitClientSendsData(webclient, 100)) {
-    return;
-  }
 
   String request = webclient.readStringUntil('\r');
-  Serial.println(request);
   webclient.flush();
   
-  // GET /?guestname=test&settime=gggh HTTP/1.1
   int indexGuest = request.indexOf("guestname=");
-  Serial.print("index guestname: "); Serial.println(indexGuest, DEC);
 
   if(indexGuest != -1) {
 
     int indexEndGuestname = request.indexOf('&');
     String guestName = request.substring(indexGuest + 10, indexEndGuestname);
-    Serial.print("substring of guestname: ");
-    Serial.println(guestName);
-
     int indexSetTime = request.indexOf("settime=");
-    Serial.print("index settime: "); Serial.println(indexSetTime, DEC);
     int indexEndSettime = request.indexOf(" HTTP");
     String settime = request.substring(indexSetTime + 8, indexEndSettime);
-    // 2019-08-25T19%3A40
+    
+    // Example: 2019-08-25T19%3A40
     // filter technical colon
     settime.replace("T", " ");
     settime.replace("%3A", ":");
-    Serial.print("substring of settime: ");
-    Serial.println(settime);
     
     WriteGuest(guestName, settime);
   }
 
   BuildWebside(webclient);
-}
-
-// ========================================================================================
-// Waiting for sending data from client.
-// ----------------------------------------------------------------------------------------
-// timeout = set max time to wait for incoming data.
-boolean WaitClientSendsData(WiFiClient webClient, int timeout) {
-
-  int timeOutCount = 0;
-  while(!webClient.available()){
-
-    timeOutCount++;
-    
-    if(timeOutCount >= timeout) {
-      return false;
-    }
-    delay(1);
-  }
-
-  return true;
 }
