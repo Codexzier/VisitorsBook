@@ -33,57 +33,6 @@ void InitSdCard() {
   }
   
   Serial.println("SD Card: Exist and partion was found");
-  SdCardShowSDCardType();                                 // Show sd card information
-  SdCardShowVolumeSize();                                 // Show sd card storage size informations
-  
-}
-
-// ========================================================================================
-// Read only the type and print to serial
-void SdCardShowSDCardType() {
-  
-  Serial.print("\nCard type: ");
-  
-  switch (mCard.type()) {
-    case SD_CARD_TYPE_SD1:
-      Serial.println("SD1");
-      break;
-    case SD_CARD_TYPE_SD2:
-      Serial.println("SD2");
-      break;
-    case SD_CARD_TYPE_SDHC:
-      Serial.println("SDHC");
-      break;
-    default:
-      Serial.println("Unknown");
-  }
-}
-
-// ========================================================================================
-// print the type and size of the first FAT-type volume
-void SdCardShowVolumeSize() {
-
-  uint32_t volumesize;
-  Serial.print("\nVolume type is FAT");
-  Serial.println(mVolume.fatType(), DEC);
-  Serial.println();
-
-  volumesize = mVolume.blocksPerCluster();            // clusters are collections of blocks
-  volumesize *= mVolume.clusterCount();               // we'll have a lot of clusters
-  volumesize *= 512;                                  // SD card blocks are always 512 bytes
-  Serial.print("Volume size (bytes): ");
-  Serial.println(volumesize);
-  Serial.print("Volume size (Kbytes): ");
-  volumesize /= 1024;
-  Serial.println(volumesize);
-  Serial.print("Volume size (Mbytes): ");
-  volumesize /= 1024;
-  Serial.println(volumesize);
-
-  Serial.println("\nFiles found on the card (name, date and size in bytes): ");
-  mRoot.openRoot(mVolume);
-
-  mRoot.ls(LS_R | LS_DATE | LS_SIZE);                 // list all files in the card with date and size
 }
 
 void WriteGuest(String guestName, String setupTime) {
@@ -101,7 +50,6 @@ void WriteGuest(String guestName, String setupTime) {
   row += "<div class=\"divTableCell\"> " + setupTime + " </div>";
   row += "</div>";
 
-  Serial.println(row);
   dataFile.println(row);
   dataFile.close();
 }
