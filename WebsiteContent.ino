@@ -80,25 +80,8 @@ void PrintGuestInput(WiFiClient webclient){
   webclient.println("  <div class=\"divTableCell\">actual time:</div>");
   webclient.println("  <div class=\"divTableCell\">");
 
-  // 0 = second, 1 = minute, 2 = hour, 3 = day of the week, 
-  // 4 = day of the month, 5 = month, 6 = year
-  byte setHour = bcdToDec(mActualTime[2] & 0x3f);
-  byte setMinute = bcdToDec(mActualTime[1]);
+  webclient.print("<input type=\"datetime-local\" name=\"settime\" value=\"\" min=\"2019-06-01T08:30\" >");
   
-  byte setDay = bcdToDec(mActualTime[4]);
-  byte setMonth = bcdToDec(mActualTime[5]);
-  int setYear = (int)bcdToDec(mActualTime[6]) + 2000;
-  
-  String datetime = String(setYear) + "-" + String(setMonth) + "-" + String( setDay);
-  datetime += "T" + String(setHour) + ":" + String(setMinute);
-
-  Serial.println(datetime);
-  
-  webclient.print("<input type=\"datetime-local\" name=\"settime\" value=\"");
-  
-  webclient.print(datetime);
-
-  webclient.println("\" min=\"2019-06-01T08:30\" >");
   webclient.println(" </div>");
   webclient.println(" </div>");
   webclient.println(" <div class=\"divTableRow\">");
@@ -116,11 +99,6 @@ void PrintVisitors(WiFiClient webclient){
   webclient.println(" <div class=\"divTableBody\">");
 
   ReadVisitorsAndPrintToWeb(webclient);
-  
-//  webclient.println("  <div class=\"divTableRow\">");
-//  webclient.println("   <div class=\"divTableCell\">name1</div>");
-//  webclient.println("   <div class=\"divTableCell\">1.1.1111</div>");
-//  webclient.println("  </div>");
   
   webclient.println(" </div>");
   webclient.println("</div>");
